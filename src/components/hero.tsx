@@ -2,43 +2,49 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <div className="relative bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        <div className="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
-          <main className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
-            <div className="sm:text-center lg:text-left">
-              <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-                <span className="block xl:inline">Agenda tu cita</span>{" "}
-                <span className="block text-blue-600 xl:inline">
-                  médica en línea
-                </span>
-              </h1>
-              <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                Fácil, rápido y seguro. Agenda tu cita médica en línea con solo
-                unos clics. Nuestra plataforma le conecta con los mejores
-                profesionales de la salud.
-              </p>
-              <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
-                <div className="rounded-md shadow">
-                  <Link
-                    href="/appointment"
-                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10"
-                  >
-                    Agenda tu cita ahora mismo
-                  </Link>
+    <div className="relative bg-white h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative pt-6 pb-16 sm:pb-24 lg:pb-32">
+          <div className="mt-16 mx-auto max-w-7xl px-4 sm:mt-24 sm:px-6 lg:mt-32">
+            <div className="lg:grid lg:grid-cols-12 lg:gap-8">
+              {/* Contenido del lado izquierdo */}
+              <div className="sm:text-center lg:text-left lg:col-span-6">
+                <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+                  <span className="block">Agenda tu cita</span>
+                  <span className="block text-blue-600 mt-1">
+                    médica en línea
+                  </span>
+                </h1>
+                <p className="mt-6 text-base text-gray-500 sm:text-lg md:text-xl">
+                  Fácil, rápido y seguro. Agenda tu cita médica en línea con
+                  solo unos clics. Nuestra plataforma le conecta con los mejores
+                  profesionales de la salud.
+                </p>
+                <div className="mt-8 sm:flex sm:justify-center lg:justify-start">
+                  <div>
+                    <Link
+                      href="/appointment"
+                      className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 transition-colors duration-200"
+                    >
+                      Agenda tu cita ahora mismo
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contenido del lado derecho - Imagen */}
+              <div className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
+                <div className="relative mx-auto w-full rounded-lg lg:max-w-md">
+                  <img
+                    className="w-full h-64 sm:h-72 md:h-80 lg:h-96 object-cover rounded-lg"
+                    src="/images/illustration.png"
+                    alt="Medical professionals"
+                  />
                 </div>
               </div>
             </div>
-          </main>
+          </div>
         </div>
-      </div>
-      <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-        <div className="absolute inset-0 bg-gradient-to-r from-white to-transparent lg:hidden"></div>
-        <img
-          className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full rounded-lg shadow-lg"
-          src="/images/illustration.png"
-          alt="Medical professionals"
-        />
       </div>
     </div>
   );

@@ -3,20 +3,39 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Eye, EyeOff, User, ChevronLeft } from "lucide-react";
+import { Credentials } from "@/interfaces/credentials.interface";
+import { authenticationService } from "@/services/auth.service";
 
 export default function LoginPage() {
+  const [credentials, setCredentials] = useState<Credentials>({
+    email: "",
+    password: "",
+  });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const fetchLogin = async (credentials: Credentials) => {
+    try {
+      const response = await authenticationService.login(credentials);
+      return response;
+    } catch (error) {
+      console.error("Error logging in:", (error as Error).message);
+      return;
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aquí iría la lógica de inicio de sesión
-    console.log("Login attempt with:", { email, password });
+
+    console.log("Login attempt with:", credentials);
+
+    const login = await fetchLogin(credentials);
+
+    console.log(login);
   };
 
   const handleGoogleLogin = () => {
-    // Aquí iría la lógica de inicio de sesión con Google
     console.log("Attempting to log in with Google");
   };
 
@@ -56,8 +75,10 @@ export default function LoginPage() {
                   autoComplete="email"
                   placeholder="ejemplo@gmail.com"
                   className="input input-bordered w-full"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={credentials.email}
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, email: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -78,8 +99,10 @@ export default function LoginPage() {
                   name="password"
                   placeholder="••••••••"
                   className="input input-bordered w-full max-w-xs"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={credentials.password}
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, password: e.target.value })
+                  }
                 />
 
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">

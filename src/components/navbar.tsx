@@ -195,9 +195,9 @@ export default function NavBar() {
                   </a>
                   <a
                     href="#"
-                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 flex items-center"
+                    className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 flex items-center text-red-500"
                   >
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <LogOut className="mr-2 h-4 w-4 text-red-500" />
                     Cerrar sesión
                   </a>
                 </div>

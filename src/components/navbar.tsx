@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Menu, X, Settings, LogOut } from "lucide-react";
+import { authenticationService } from "@/services/auth.service";
 import Cookies from "js-cookie";
 
 export default function NavBar() {
@@ -9,6 +10,26 @@ export default function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [perfil, setPerfil] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const fetchLogOut = async () => {
+    try {
+      const response = await authenticationService.logOut();
+      return response;
+    } catch (error) {
+      console.error("Error logging out:", (error as Error).message);
+      return false;
+    }
+  };
+
+  const handleLogOut = async () => {
+    const logOut = await fetchLogOut();
+
+    if (logOut) {
+      Cookies.remove("token");
+      console.log(logOut);
+      setPerfil(false);
+    }
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -25,6 +46,10 @@ export default function NavBar() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    console.log(perfil);
+  }, [perfil]);
 
   useEffect(() => {
     const token = Cookies.get("token");
@@ -64,12 +89,19 @@ export default function NavBar() {
             >
               Sobre nosotros
             </a>
-            <a
-              href="/login"
-              className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-            >
-              Ingresar
-            </a>
+
+            {!perfil ? (
+              <>
+                <a
+                  href="/login"
+                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                >
+                  Ingresar
+                </a>
+              </>
+            ) : (
+              <></>
+            )}
 
             {perfil ? (
               <>
@@ -104,6 +136,7 @@ export default function NavBar() {
                       <a
                         href="#"
                         className="block px-4 py-2 text-sm  hover:bg-gray-100 flex items-center text-red-500"
+                        onClick={handleLogOut}
                       >
                         <LogOut className="mr-2 h-4 w-4 text-red-500" />
                         Cerrar sesión
@@ -158,12 +191,19 @@ export default function NavBar() {
             >
               Contactanos
             </a>
-            <a
-              href="/login"
-              className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-            >
-              Ingresar
-            </a>
+
+            {!perfil ? (
+              <>
+                <a
+                  href="/login"
+                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                >
+                  Ingresar
+                </a>
+              </>
+            ) : (
+              <></>
+            )}
           </div>
           {perfil ? (
             <>

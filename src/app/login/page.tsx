@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Eye, EyeOff, User, ChevronLeft } from "lucide-react";
 import { Credentials } from "@/interfaces/credentials.interface";
 import { authenticationService } from "@/services/auth.service";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [credentials, setCredentials] = useState<Credentials>({
@@ -14,6 +16,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const router = useRouter();
 
   const fetchLogin = async (credentials: Credentials) => {
     try {
@@ -28,11 +32,15 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Login attempt with:", credentials);
-
     const login = await fetchLogin(credentials);
 
     console.log(login);
+
+    if (login) {
+      Cookies.set("token", login.access_token, { expires: 1 });
+
+      router.push("/");
+    }
   };
 
   const handleGoogleLogin = () => {

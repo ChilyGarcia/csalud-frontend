@@ -11,22 +11,22 @@ export default function Reviews() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <ReviewCard
             name="Sarah Johnson"
-            role="Patient"
-            content="CSalud made it incredibly easy to find and schedule appointments with healthcare professionals. The video consultation feature is a game-changer!"
+            role="Paciente"
+            content="CSalud hace que sea increíblemente fácil encontrar y concertar citas con profesionales sanitarios. La función de videoconsulta cambia las reglas del juego."
             rating={5}
             image="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80"
           />
           <ReviewCard
             name="Dr. Michael Chen"
-            role="Cardiologist"
-            content="As a healthcare provider, CSalud has streamlined my practice management and improved patient communication significantly."
+            role="Cardiologo"
+            content="Como profesional sanitario, CSalud ha agilizado la gestión de mi consulta y ha mejorado notablemente la comunicación con los pacientes."
             rating={5}
             image="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80"
           />
           <ReviewCard
             name="Emily Rodriguez"
-            role="Patient"
-            content="The chat feature helps me stay connected with my healthcare provider. It's reassuring to know I can reach out when needed."
+            role="Paciente"
+            content="La función de chat me ayuda a mantenerme en contacto con mi profesional sanitario. Me tranquiliza saber que puedo contactar con él cuando lo necesito."
             rating={5}
             image="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80"
           />

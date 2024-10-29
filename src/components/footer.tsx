@@ -57,7 +57,7 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Contacto</h3>
             <ul className="space-y-2">
               <li className="text-gray-400">support@csalud.com</li>
-              <li className="text-gray-400">1-800-CSALUD</li>
+              <li className="text-gray-400">31688383743</li>
             </ul>
           </div>
         </div>

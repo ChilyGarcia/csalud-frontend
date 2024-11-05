@@ -225,9 +225,7 @@ export default function Appointment() {
                 >
                   <div className="p-4">
                     <Image
-                      src={`/placeholder.svg?height=100&width=100&text=${encodeURIComponent(
-                        professional.name
-                      )}`}
+                      src={`https://images.unsplash.com/photo-1550831107-1553da8c8464?auto=format&fit=crop&w=500&q=80`}
                       alt={professional.name}
                       width={100}
                       height={100}
@@ -283,9 +281,7 @@ export default function Appointment() {
               {selectedProfessional?.specialty}
             </p>
             <Image
-              src={`/placeholder.svg?height=200&width=200&text=${encodeURIComponent(
-                selectedProfessional?.name || ""
-              )}`}
+              src={`https://images.unsplash.com/photo-1550831107-1553da8c8464?auto=format&fit=crop&w=500&q=80`}
               alt={selectedProfessional?.name}
               width={200}
               height={200}

@@ -4,45 +4,8 @@ import { useState, useEffect } from "react";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-
-// Mock list of health professionals
-const healthProfessionals = [
-  {
-    id: 1,
-    name: "Dra. Ana García",
-    specialty: "Médico General",
-    description:
-      "Especialista en medicina familiar con 10 años de experiencia.",
-    detailedDescription:
-      "La Dra. Ana García es una médica general altamente calificada con una década de experiencia en el campo de la medicina familiar. Se especializa en el cuidado integral de pacientes de todas las edades, desde niños hasta adultos mayores. Su enfoque se centra en la prevención de enfermedades y la promoción de un estilo de vida saludable.",
-  },
-  {
-    id: 2,
-    name: "Dr. Carlos Rodríguez",
-    specialty: "Dentista",
-    description: "Odontólogo especializado en ortodoncia y estética dental.",
-    detailedDescription:
-      "El Dr. Carlos Rodríguez es un dentista con amplia experiencia en ortodoncia y estética dental. Su pasión por crear sonrisas hermosas y saludables lo ha llevado a especializarse en las últimas técnicas de ortodoncia invisible y blanqueamiento dental. Además, se mantiene actualizado con las más recientes innovaciones en odontología digital.",
-  },
-  {
-    id: 3,
-    name: "Lic. María López",
-    specialty: "Psicóloga",
-    description:
-      "Psicóloga clínica especializada en terapia cognitivo-conductual.",
-    detailedDescription:
-      "La Lic. María López es una psicóloga clínica con una sólida formación en terapia cognitivo-conductual. Se especializa en el tratamiento de trastornos de ansiedad, depresión y estrés postraumático. Su enfoque terapéutico se centra en empoderar a sus pacientes para que desarrollen habilidades de afrontamiento efectivas y logren una mejor calidad de vida.",
-  },
-  {
-    id: 4,
-    name: "Dr. Juan Pérez",
-    specialty: "Pediatra",
-    description:
-      "Pediatra con experiencia en el cuidado de niños y adolescentes.",
-    detailedDescription:
-      "El Dr. Juan Pérez es un pediatra dedicado con más de 15 años de experiencia en el cuidado de niños desde recién nacidos hasta adolescentes. Se especializa en el desarrollo infantil, nutrición pediátrica y manejo de enfermedades crónicas en niños. Su enfoque amigable y paciente lo hace muy querido por sus pequeños pacientes y sus familias.",
-  },
-];
+import { backendService } from "@/services/backend.service";
+import { Specialty } from "@/interfaces/specialty.interface";
 
 export default function Appointment() {
   const [formData, setFormData] = useState({
@@ -57,17 +20,30 @@ export default function Appointment() {
     useState(false);
   const [filteredProfessionals, setFilteredProfessionals] = useState([]);
 
-  const specialties = [...new Set(healthProfessionals.map((p) => p.specialty))];
+  const [specialties, setSpecialties] = useState<Specialty[]>([]);
+
+  // useEffect(() => {
+  //   if (formData.specialty) {
+  //     setFilteredProfessionals(
+  //       healthProfessionals.filter((p) => p.specialty === formData.specialty)
+  //     );
+  //   } else {
+  //     setFilteredProfessionals([]);
+  //   }
+  // }, [formData.specialty]);
 
   useEffect(() => {
-    if (formData.specialty) {
-      setFilteredProfessionals(
-        healthProfessionals.filter((p) => p.specialty === formData.specialty)
-      );
-    } else {
-      setFilteredProfessionals([]);
-    }
-  }, [formData.specialty]);
+    const fetchSpecialties = async () => {
+      try {
+        const response = await backendService.professionalList();
+        setSpecialties(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchSpecialties();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -81,6 +57,8 @@ export default function Appointment() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    console.log(formData);
     setIsDialogOpen(true);
   };
 
@@ -134,9 +112,9 @@ export default function Appointment() {
                 required
               >
                 <option value="">Seleccione una especialidad</option>
-                {specialties.map((specialty) => (
-                  <option key={specialty} value={specialty}>
-                    {specialty}
+                {(specialties || []).map((specialty) => (
+                  <option key={specialty.id} value={specialty.name}>
+                    {specialty.name}
                   </option>
                 ))}
               </select>
@@ -208,7 +186,7 @@ export default function Appointment() {
         </div>
       </div>
 
-      {isDialogOpen && (
+     {isDialogOpen && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 max-w-3xl w-full max-h-[80vh] overflow-y-auto">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
@@ -271,7 +249,7 @@ export default function Appointment() {
         </div>
       )}
 
-      {isProfessionalDetailsOpen && (
+      {/* {isProfessionalDetailsOpen && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -309,7 +287,7 @@ export default function Appointment() {
             </div>
           </div>
         </div>
-      )}
+      )}  */}
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">

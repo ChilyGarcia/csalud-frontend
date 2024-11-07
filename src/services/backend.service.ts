@@ -17,4 +17,26 @@ export const backendService = {
       return [];
     }
   },
+  filteredProfessionals: async (body: any) => {
+    try {
+      const response = await fetch(API_URL + "/find-availaibility-filter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(
+        "Error fetching filtered professionals:",
+        (error as Error).message
+      );
+      return [];
+    }
+  },
 };

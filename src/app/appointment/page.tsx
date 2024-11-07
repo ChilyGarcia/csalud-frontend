@@ -20,7 +20,7 @@ export default function Appointment() {
     useState(false);
   const [filteredProfessionals, setFilteredProfessionals] = useState([]);
 
-  const [specialties, setSpecialties] = useState<Specialty[]>([]);
+  const [specialties, setSpecialties] = useState([]);
 
   // useEffect(() => {
   //   if (formData.specialty) {
@@ -36,7 +36,7 @@ export default function Appointment() {
     const fetchSpecialties = async () => {
       try {
         const response = await backendService.professionalList();
-        setSpecialties(response.data);
+        setSpecialties(response); // Asignar directamente la respuesta
       } catch (error) {
         console.error(error);
       }
@@ -44,7 +44,6 @@ export default function Appointment() {
 
     fetchSpecialties();
   }, []);
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -55,10 +54,31 @@ export default function Appointment() {
     }));
   };
 
+  useEffect(() => {
+    console.log(filteredProfessionals);
+  }, [filteredProfessionals]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log(formData);
+    const body = {
+      specialty_id: formData.specialty,
+      date: formData.date,
+      start_time: formData.startTime,
+      end_time: formData.endTime,
+    };
+
+    const fetchFilterProfessional = async () => {
+      try {
+        const response = await backendService.filteredProfessionals(body);
+        setFilteredProfessionals(response);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchFilterProfessional();
+
     setIsDialogOpen(true);
   };
 
@@ -113,7 +133,7 @@ export default function Appointment() {
               >
                 <option value="">Seleccione una especialidad</option>
                 {(specialties || []).map((specialty) => (
-                  <option key={specialty.id} value={specialty.name}>
+                  <option key={specialty.id} value={specialty.id}>
                     {specialty.name}
                   </option>
                 ))}
@@ -186,7 +206,7 @@ export default function Appointment() {
         </div>
       </div>
 
-     {isDialogOpen && (
+      {isDialogOpen && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 max-w-3xl w-full max-h-[80vh] overflow-y-auto">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
@@ -204,18 +224,15 @@ export default function Appointment() {
                   <div className="p-4">
                     <Image
                       src={`https://images.unsplash.com/photo-1550831107-1553da8c8464?auto=format&fit=crop&w=500&q=80`}
-                      alt={professional.name}
+                      alt={professional.specialty.name}
                       width={100}
                       height={100}
                       className="rounded-full mx-auto mb-4"
                     />
                     <h4 className="text-lg font-semibold text-center">
-                      {professional.name}
+                      {professional.specialty.name}
                     </h4>
                     <p className="text-sm text-gray-500 text-center mb-2">
-                      {professional.specialty}
-                    </p>
-                    <p className="text-sm text-gray-600 mb-4">
                       {professional.description}
                     </p>
                     <div className="flex justify-between">
@@ -249,24 +266,24 @@ export default function Appointment() {
         </div>
       )}
 
-      {/* {isProfessionalDetailsOpen && (
+      {isProfessionalDetailsOpen && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {selectedProfessional?.name}
+              {selectedProfessional?.specialty.name}
             </h3>
             <p className="text-sm text-gray-500 mb-4">
-              {selectedProfessional?.specialty}
+              {selectedProfessional?.specialty.name}
             </p>
             <Image
               src={`https://images.unsplash.com/photo-1550831107-1553da8c8464?auto=format&fit=crop&w=500&q=80`}
-              alt={selectedProfessional?.name}
+              alt={selectedProfessional?.specialty.name}
               width={200}
               height={200}
               className="rounded-full mx-auto mb-4"
             />
             <p className="text-sm text-gray-600 mb-6">
-              {selectedProfessional?.detailedDescription}
+              {selectedProfessional?.description}
             </p>
             <div className="flex justify-end space-x-4">
               <button
@@ -287,7 +304,7 @@ export default function Appointment() {
             </div>
           </div>
         </div>
-      )}  */}
+      )}
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">

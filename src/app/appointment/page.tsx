@@ -7,6 +7,7 @@ import Image from "next/image";
 import { backendService } from "@/services/backend.service";
 import { Specialty } from "@/interfaces/specialty.interface";
 import { Professional } from "@/interfaces/professional.interface";
+import { useRouter } from "next/navigation";
 
 export default function Appointment() {
   const [formData, setFormData] = useState({
@@ -30,6 +31,8 @@ export default function Appointment() {
     useState(false);
   const [filteredProfessionals, setFilteredProfessionals] = useState([]);
   const [specialties, setSpecialties] = useState([]);
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchSpecialties = async () => {
@@ -119,6 +122,8 @@ export default function Appointment() {
     setSelectedProfessional(professional);
     setIsDialogOpen(false);
     setIsProfessionalDetailsOpen(false);
+
+    router.push("/my-appointments");
   };
 
   return (

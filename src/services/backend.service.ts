@@ -61,4 +61,23 @@ export const backendService = {
       console.error("Error creating appointment:", (error as Error).message);
     }
   },
+
+  listAppointments: async () => {
+    const token = Cookies.get("token");
+    try {
+      const response = await fetch(BACKEND_URL + "/appointments", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching appointments:", (error as Error).message);
+      return [];
+    }
+  },
 };

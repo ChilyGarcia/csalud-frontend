@@ -1,9 +1,9 @@
-const API_URL = process.env.API_URL || "http://localhost:8000/api";
+const BACKEND_URL = "http://127.0.0.1:8000/api";
 
 export const backendService = {
   professionalList: async () => {
     try {
-      const response = await fetch(API_URL + "/specialties");
+      const response = await fetch(BACKEND_URL + "/specialties");
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -19,7 +19,7 @@ export const backendService = {
   },
   filteredProfessionals: async (body: any) => {
     try {
-      const response = await fetch(API_URL + "/find-availaibility-filter", {
+      const response = await fetch(BACKEND_URL + "/find-availaibility-filter", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

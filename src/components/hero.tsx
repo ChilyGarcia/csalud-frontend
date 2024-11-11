@@ -1,6 +1,22 @@
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function Hero() {
+  const router = useRouter();
+
+  const handleAppointment = () => {
+    const token = Cookies.get("token");
+
+    console.log("Este es el token pues", token);
+
+    if (!token || token === undefined) {
+      router.push("/login");
+    } else {
+      router.push("/appointment");
+    }
+  };
+
   return (
     <div className="relative bg-white h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,12 +38,12 @@ export default function Hero() {
                 </p>
                 <div className="mt-8 sm:flex sm:justify-center lg:justify-start">
                   <div>
-                    <Link
-                      href="/appointment"
+                    <a
+                      onClick={handleAppointment}
                       className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 transition-colors duration-200"
                     >
                       Agenda tu cita ahora mismo
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>

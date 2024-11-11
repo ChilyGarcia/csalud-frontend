@@ -98,6 +98,24 @@ export default function Appointment() {
       }));
     }
 
+    const bodyAppointment = {
+      health_professional_id: professional.user_id,
+      date: formData.date,
+      start_time: formData.startTime,
+      end_time: formData.endTime,
+    };
+
+    const fetchAppointmentData = async (data) => {
+      try {
+        const response = await backendService.appointment(data);
+        setFilteredProfessionals(response);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchAppointmentData(bodyAppointment);
+
     setSelectedProfessional(professional);
     setIsDialogOpen(false);
     setIsProfessionalDetailsOpen(false);

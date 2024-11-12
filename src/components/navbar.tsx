@@ -127,11 +127,11 @@ export default function NavBar() {
                       </div>
                       <hr className="border-gray-200" />
                       <a
-                        href="#"
+                        href="/my-appointments"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                       >
                         <Settings className="mr-2 h-4 w-4" />
-                        Configuración
+                        Mis citas
                       </a>
                       <a
                         href="#"

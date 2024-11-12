@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 
-const BACKEND_URL = "https://clownfish-app-8pq82.ondigitalocean.app";
+const BACKEND_URL = "https://clownfish-app-8pq82.ondigitalocean.app/api";
 
 export const backendService = {
   professionalList: async () => {

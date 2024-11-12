@@ -1,7 +1,7 @@
 import { Credentials } from "@/interfaces/credentials.interface";
 import Cookies from "js-cookie";
 
-const BACKEND_URL = "https://clownfish-app-8pq82.ondigitalocean.app"; // https://clownfish-app-8pq82.ondigitalocean.app    http://127.0.0.1:8000/api/auth
+const BACKEND_URL = "https://clownfish-app-8pq82.ondigitalocean.app/api/auth"; // https://clownfish-app-8pq82.ondigitalocean.app    http://127.0.0.1:8000/api/auth
 
 export const authenticationService = {
   login: async (credentials: Credentials) => {

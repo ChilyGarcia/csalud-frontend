@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Pusher from "pusher-js";
+import Cookies from "js-cookie";
 
 function Chat() {
   const [messages, setMessages] = useState([]);
@@ -14,7 +15,7 @@ function Chat() {
     });
 
     // Suscríbete al canal
-    const channel = pusher.subscribe("chat");
+    const channel = pusher.subscribe("chat-1");
 
     // Escucha el evento MessageSent
     channel.bind(
@@ -48,6 +49,7 @@ function Chat() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${Cookies.get("token")}`,
         "X-CSRF-TOKEN":
           document
             .querySelector('meta[name="csrf-token"]')

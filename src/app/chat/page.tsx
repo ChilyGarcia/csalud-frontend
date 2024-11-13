@@ -1,15 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import Pusher from "pusher-js";
-import Cookies from "js-cookie";
 
-export default function Chat() {
+function Chat() {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
-  const userId = 1;
-  const receiverId = 2;
 
   useEffect(() => {
     // Inicializa Pusher
@@ -17,57 +13,52 @@ export default function Chat() {
       cluster: "mt1",
     });
 
-    // Suscríbete al canal privado del usuario autenticado
-    const channel = pusher.subscribe(`private-chat.${userId}`);
+    // Suscríbete al canal
+    const channel = pusher.subscribe("chat");
 
     // Escucha el evento MessageSent
-    channel.bind("App\\Events\\MessageSent", (data) => {
-      if (data.senderId === receiverId || data.receiverId === receiverId) {
+    channel.bind(
+      "App\\Events\\MessageSent",
+      (data: { user: string; message: string }) => {
         setMessages((prevMessages) => [
           ...prevMessages,
-          { sender_id: data.senderId, message: data.message },
+          { user: data.user, message: data.message },
         ]);
       }
-    });
+    );
 
-    // Cargar mensajes iniciales
-    axios
-      .get(`http://127.0.0.1:8000/api/messages?receiver_id=${receiverId}`, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      })
-      .then((response) => {
-        setMessages(response.data);
+    // Cargar mensajes al inicio
+    fetch("http://csalud.test/api/messages")
+      .then((response) => response.json())
+      .then((messages) => {
+        setMessages(messages);
       });
 
-    // Limpieza al desmontar el componente
+    // Cleanup al desmontar el componente
     return () => {
-      pusher.unsubscribe(`private-chat.${userId}`);
+      channel.unbind_all();
+      channel.unsubscribe();
     };
   }, []);
 
   const handleSendMessage = () => {
-    axios
-      .post(
-        "/chat/message",
-        {
-          receiver_id: receiverId,
-          message: messageInput,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
-              .content,
-          },
-        }
-      )
-      .then((response) => {
-        if (response.status === 200) {
-          setMessageInput(""); // Limpiar el campo de entrada
-        }
-      });
+    if (messageInput.trim() === "") return;
+
+    fetch("http://csalud.test/api/chat/message", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-TOKEN":
+          document
+            .querySelector('meta[name="csrf-token"]')
+            ?.getAttribute("content") || "",
+      },
+      body: JSON.stringify({ message: messageInput }),
+    }).then((response) => {
+      if (response.ok) {
+        setMessageInput(""); // Limpiar el campo de entrada
+      }
+    });
   };
 
   return (
@@ -95,7 +86,7 @@ export default function Chat() {
         >
           {messages.map((msg, index) => (
             <div key={index}>
-              <strong>{msg.sender_id}:</strong> {msg.message}
+              <strong>{msg.user}:</strong> {msg.message}
             </div>
           ))}
         </div>
@@ -107,10 +98,16 @@ export default function Chat() {
           onChange={(e) => setMessageInput(e.target.value)}
           style={{ width: "calc(100% - 70px)", padding: "10px" }}
         />
-        <button onClick={handleSendMessage} style={{ padding: "10px" }}>
+        <button
+          id="send-button"
+          onClick={handleSendMessage}
+          style={{ padding: "10px" }}
+        >
           Enviar
         </button>
       </div>
     </div>
   );
 }
+
+export default Chat;

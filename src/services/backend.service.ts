@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 
-const BACKEND_URL = "http://csalud.test/api/auth";
+const BACKEND_URL = "https://clownfish-app-8pq82.ondigitalocean.app/api";
 
 export const backendService = {
   professionalList: async () => {
@@ -77,6 +77,30 @@ export const backendService = {
       return data;
     } catch (error) {
       console.error("Error fetching appointments:", (error as Error).message);
+      return [];
+    }
+  },
+
+  getMessages: async (sender_id: number, receiver_id: number) => {
+    const token = Cookies.get("token");
+    try {
+      const response = await fetch(BACKEND_URL + "/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          receiver_id: receiver_id,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching messages:", (error as Error).message);
       return [];
     }
   },

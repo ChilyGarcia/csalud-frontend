@@ -53,13 +53,15 @@ export default function Component() {
 
     try {
       const register = await fetchRegister();
-      if (register.success) {
+      if (register && register.success) {
         console.log("Registro exitoso");
         router.push("/login");
       } else {
-        const errorMessages = Object.values(register.errors).flat().join(", ");
+        const errorMessages =
+          register && "errors" in register
+            ? Object.values(register.errors).flat().join(", ")
+            : "Unknown error";
         setErrors(errorMessages);
-        console.log("Error en el registro", register.errors);
 
         setIsVisibleToast(true);
         setTimeout(() => {

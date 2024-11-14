@@ -1,7 +1,6 @@
 import { Credentials } from "@/interfaces/credentials.interface";
+import { RegisterCredentials } from "@/interfaces/register.interface";
 import Cookies from "js-cookie";
-
-
 
 const BACKEND_URL = "https://clownfish-app-8pq82.ondigitalocean.app/api/auth"; // https://clownfish-app-8pq82.ondigitalocean.app/api/auth    http://127.0.0.1:8000/api/auth
 
@@ -64,7 +63,28 @@ export const authenticationService = {
       return false;
     }
   },
+  register: async (credentials: RegisterCredentials) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      });
 
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { success: false, errors: data };
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error("Error registering:", (error as Error).message);
+      return { success: false, errors: { message: (error as Error).message } };
+    }
+  },
   userDetails: async () => {
     const token = Cookies.get("token");
 
@@ -81,9 +101,7 @@ export const authenticationService = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          /* datos adicionales aquí */
-        }),
+        body: JSON.stringify({}),
       });
 
       if (!response.ok) {

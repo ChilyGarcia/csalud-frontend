@@ -53,7 +53,7 @@ export default function Hero() {
                 <div className="relative mx-auto w-full rounded-lg lg:max-w-md">
                   <img
                     className="w-full h-64 sm:h-72 md:h-80 lg:h-96 object-cover rounded-lg"
-                    src="/images/illustration.png"
+                    src="/images/hero.png"
                     alt="Medical professionals"
                   />
                 </div>

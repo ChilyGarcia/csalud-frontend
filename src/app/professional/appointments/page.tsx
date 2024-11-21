@@ -5,6 +5,7 @@ import { Bell, Calendar, Check, X, Menu } from "lucide-react";
 import Link from "next/link";
 import NavBar from "@/components/navbar";
 import { authenticationService } from "@/services/auth.service";
+import { backendService } from "@/services/backend.service";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -44,7 +45,7 @@ const initialAppointments = [
 ];
 
 export default function AppointmentManager() {
-  const [appointments, setAppointments] = useState(initialAppointments);
+  const [appointments, setAppointments] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
 
@@ -61,6 +62,15 @@ export default function AppointmentManager() {
     }
   };
 
+  const fetchProfessionalAppointments = async () => {
+    try {
+      const response = await backendService.getAllAppointmentsProfessional();
+      setAppointments(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const getUserDetails = async () => {
       const userDetails = await fetchUserDetails();
@@ -72,8 +82,18 @@ export default function AppointmentManager() {
       console.log(userDetails);
     };
 
+    const getProfessionalAppointments = async () => {
+      const appointments = await fetchProfessionalAppointments();
+      console.log(appointments);
+    };
+
     getUserDetails();
+    getProfessionalAppointments();
   }, []);
+
+  useEffect(() => {
+    console.log(appointments);
+  }, [appointments]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -110,56 +130,50 @@ export default function AppointmentManager() {
             </button>
           </div>
 
-          {appointments.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <p className="text-gray-600">
-                No hay citas pendientes por revisar
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {appointments.map((apt) => (
-                <div
-                  key={apt.id}
-                  className="bg-white border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        {apt.patientName}
-                      </h3>
-                      <p className="text-gray-500 text-sm">{apt.reason}</p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="h-5 w-5 text-[#2563EB]" />
-                      <span className="text-gray-600">{apt.date}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <p className="text-gray-600">
-                      <strong>Hora:</strong> {apt.time}
-                    </p>
-                    <div className="flex space-x-3">
-                      <button
-                        onClick={() => handleAppointment(apt.id, "decline")}
-                        className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 transition-colors flex items-center"
-                      >
-                        <X className="h-4 w-4 mr-1" /> Rechazar
-                      </button>
-                      <button
-                        onClick={() => handleAppointment(apt.id, "accept")}
-                        className="px-4 py-2 bg-[#2563EB] text-white rounded-md hover:bg-blue-700 transition-colors flex items-center"
-                      >
-                        <Check className="h-4 w-4 mr-1" /> Aceptar
-                      </button>
-                    </div>
-                  </div>
+          {appointments.map((apt) => (
+            <div
+              key={apt.id}
+              className="bg-white border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    {apt.patient.name}
+                  </h3>
+                  <p className="text-gray-500 text-sm">{apt.reason}</p>
                 </div>
-              ))}
+                <div className="flex items-center space-x-2">
+                  <Calendar className="h-5 w-5 text-[#2563EB]" />
+                  <span className="text-gray-600">{apt.date}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="text-gray-600">
+                  <p>
+                    <strong>Hora de inicio: </strong> {apt.start_time}
+                  </p>
+                  <p className="pt-2">
+                    <strong>Hora de fin: </strong> {apt.end_time}
+                  </p>
+                </div>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => handleAppointment(apt.id, "decline")}
+                    className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 transition-colors flex items-center"
+                  >
+                    <X className="h-4 w-4 mr-1" /> Rechazar
+                  </button>
+                  <button
+                    onClick={() => handleAppointment(apt.id, "accept")}
+                    className="px-4 py-2 bg-[#2563EB] text-white rounded-md hover:bg-blue-700 transition-colors flex items-center"
+                  >
+                    <Check className="h-4 w-4 mr-1" /> Aceptar
+                  </button>
+                </div>
+              </div>
             </div>
-          )}
+          ))}
         </div>
       </main>
     </div>

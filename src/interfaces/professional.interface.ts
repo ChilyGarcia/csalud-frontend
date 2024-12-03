@@ -7,6 +7,7 @@ export interface Professional {
     updated_at:     Date;
     specialty:      Specialty;
     availabilities: Availability[];
+    user:           User;
 }
 
 export interface Availability {
@@ -24,4 +25,14 @@ export interface Specialty {
     name:       string;
     created_at: null;
     updated_at: null;
+}
+
+export interface User {
+    id:                number;
+    name:              string;
+    email:             string;
+    email_verified_at: null;
+    created_at:        null;
+    updated_at:        Date;
+    role:              string;
 }

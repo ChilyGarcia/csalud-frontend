@@ -40,7 +40,7 @@ export default function Hero() {
                   <div>
                     <a
                       onClick={handleAppointment}
-                      className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 transition-colors duration-200"
+                      className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 transition-colors duration-200 cursor-pointer"
                     >
                       Agenda tu cita ahora mismo
                     </a>

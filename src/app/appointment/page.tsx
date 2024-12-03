@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, Phone, Clock, Calendar, User2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import { backendService } from "@/services/backend.service";
 import { Specialty } from "@/interfaces/specialty.interface";
 import { Professional } from "@/interfaces/professional.interface";
 import { useRouter } from "next/navigation";
+import { X, ChevronRight } from "lucide-react";
 
 export default function Appointment() {
   const [formData, setFormData] = useState({
@@ -31,6 +32,21 @@ export default function Appointment() {
     useState(false);
   const [filteredProfessionals, setFilteredProfessionals] = useState([]);
   const [specialties, setSpecialties] = useState([]);
+
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    if (sliderRef.current) {
+      const scrollAmount = 350;
+      const newScrollPosition =
+        sliderRef.current.scrollLeft +
+        (direction === "left" ? -scrollAmount : scrollAmount);
+      sliderRef.current.scrollTo({
+        left: newScrollPosition,
+        behavior: "smooth",
+      });
+    }
+  };
 
   const router = useRouter();
 
@@ -94,7 +110,7 @@ export default function Appointment() {
     if (professional) {
       setFormDataAppointment((prevState) => ({
         ...prevState,
-        health_professional_id: professional.user_id,
+        health_professional_id: professional.id,
         date: formData.date,
         start_time: formData.startTime,
         end_time: formData.endTime,
@@ -102,7 +118,7 @@ export default function Appointment() {
     }
 
     const bodyAppointment = {
-      health_professional_id: professional.user_id,
+      health_professional_id: professional.id,
       date: formData.date,
       start_time: formData.startTime,
       end_time: formData.endTime,
@@ -268,7 +284,7 @@ export default function Appointment() {
               <div>
                 <p className="font-medium text-gray-900">Servicio al Cliente</p>
                 <p className="text-blue-600 hover:text-blue-700 transition-colors duration-200">
-                  +1 (555) 123-4567
+                  +57 3167373829
                 </p>
               </div>
             </div>
@@ -276,67 +292,91 @@ export default function Appointment() {
         </div>
       </div>
 
-      {/* Professional Selection Dialog */}
       {isDialogOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-4xl w-full max-h-[80vh] overflow-y-auto">
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              Profesionales Disponibles
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Seleccione un profesional para su cita
-            </p>
-
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {filteredProfessionals.map((professional: Professional) => (
-                <div
-                  key={professional.id}
-                  className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-200 hover:scale-[1.02]"
-                >
-                  <div className="p-6">
-                    <div className="relative w-24 h-24 mx-auto mb-4">
-                      <Image
-                        src="https://images.unsplash.com/photo-1550831107-1553da8c8464?auto=format&fit=crop&w=500&q=80"
-                        alt={professional.specialty.name}
-                        layout="fill"
-                        objectFit="cover"
-                        className="rounded-full"
-                      />
-                    </div>
-                    <h4 className="text-xl font-semibold text-center text-gray-900 mb-2">
-                      {professional.specialty.name}
-                    </h4>
-                    <p className="text-gray-600 text-center mb-4 line-clamp-2">
-                      {professional.description}
-                    </p>
-                    <div className="flex justify-between items-center">
-                      <button
-                        onClick={() => {
-                          setSelectedProfessional(professional);
-                          setIsProfessionalDetailsOpen(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
-                      >
-                        Ver detalles
-                      </button>
-                      <button
-                        onClick={() => handleProfessionalSelect(professional)}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-                      >
-                        Seleccionar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setIsDialogOpen(false)}
+          />
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
             <button
               onClick={() => setIsDialogOpen(false)}
-              className="mt-8 w-full py-3 px-4 bg-gray-100 text-gray-800 rounded-lg font-medium hover:bg-gray-200 transition-colors duration-200"
+              className="absolute right-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
             >
-              Cerrar
+              <X className="w-6 h-6 text-gray-500" />
             </button>
+
+            <div className="p-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+                Profesionales de la Salud
+              </h2>
+
+              <div className="relative">
+                <button
+                  onClick={() => scroll("left")}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50"
+                >
+                  <ChevronLeft className="w-6 h-6 text-gray-600" />
+                </button>
+
+                <div
+                  ref={sliderRef}
+                  className="flex overflow-x-auto gap-4 p-4 scroll-smooth hide-scrollbar"
+                  style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                >
+                  {filteredProfessionals.map((professional) => (
+                    <div
+                      key={professional.id}
+                      className="min-w-[300px] bg-white rounded-xl shadow-lg p-6 mx-4 flex flex-col items-center transition-transform hover:scale-105"
+                    >
+                      <div className="w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-blue-500">
+                        <img
+                          src={professional.imageUrl}
+                          alt={professional.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src =
+                              "https://images.unsplash.com/photo-1550831107-1553da8c8464?auto=format&fit=crop&w=500&q=80";
+                          }}
+                        />
+                      </div>
+
+                      <h3 className="text-xl font-bold text-gray-800 mb-2">
+                        {professional.user.name}
+                      </h3>
+                      <p className="text-gray-600 text-center mb-6 line-clamp-3">
+                        {professional.description}
+                      </p>
+
+                      <div className="flex justify-center items-center gap-x-8">
+                        <button
+                          onClick={() => {
+                            setSelectedProfessional(professional);
+                            setIsProfessionalDetailsOpen(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
+                        >
+                          Ver detalles
+                        </button>
+                        <button
+                          onClick={() => handleProfessionalSelect(professional)}
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                        >
+                          Seleccionar
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => scroll("right")}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50"
+                >
+                  <ChevronRight className="w-6 h-6 text-gray-600" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

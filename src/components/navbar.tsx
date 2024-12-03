@@ -134,7 +134,7 @@ export default function NavBar() {
                   >
                     <img
                       className="h-8 w-8 rounded-full"
-                      src="https://github.com/shadcn.png"
+                      src="/images/user-icon.png"
                       alt="User avatar"
                     />
                   </button>

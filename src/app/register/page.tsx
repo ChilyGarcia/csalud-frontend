@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { RegisterCredentials } from "@/interfaces/register.interface";
+import { IRegisterProfesional } from "@/interfaces/register-professional.interface";
 import { authenticationService } from "@/services/auth.service";
+import { backendService } from "@/services/backend.service";
 import { Oval } from "react-loader-spinner";
 import { useRouter } from "next/navigation";
+import { Specialty } from "@/interfaces/appointment.interface";
 
 export default function Component() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isUserType, setIsUserType] = useState(true);
 
   const initialState: RegisterCredentials = {
     name: "",
@@ -19,18 +23,43 @@ export default function Component() {
     password_confirmation: "",
   };
 
+  const registerProfesional: IRegisterProfesional = {
+    description: "",
+    specialty_id: 0,
+  };
+
   const [formRegister, setFormRegister] =
     useState<RegisterCredentials>(initialState);
+
+  const [formRegisterProfesional, setFormRegisterProfesional] =
+    useState<IRegisterProfesional>(registerProfesional);
 
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string | null>(null);
   const [isVisibleToast, setIsVisibleToast] = useState(false);
   const router = useRouter();
+  const [specialties, setSpecialties] = useState([]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormRegister((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormRegisterProfesional((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleInputChangeProfessional = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormRegisterProfesional((prev) => ({ ...prev, [name]: value }));
+  };
+
+  useEffect(() => {
+    console.log(formRegisterProfesional);
+  }, [formRegisterProfesional]);
 
   const fetchRegister = async () => {
     setIsLoading(true);
@@ -45,15 +74,38 @@ export default function Component() {
       setIsLoading(false);
     }
   };
+
+  const fetchRegisterProfesional = async (body) => {
+    setIsLoading(true);
+
+    console.log("Datos a enviar:", formRegisterProfesional);
+
+    try {
+      const response = await backendService.registerProfesional(body);
+
+      return response;
+    } catch (error) {
+      console.error("Error fetching user details:", (error as Error).message);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUserTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsUserType(e.target.value === "user");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setIsLoading(true);
-    setErrors(null); // Reset errors before new submission
+    setErrors(null);
 
     try {
       const register = await fetchRegister();
       if (register && register.success) {
+        console.log(register.data.id);
         console.log("Registro exitoso");
         router.push("/login");
       } else {
@@ -68,6 +120,36 @@ export default function Component() {
           setIsVisibleToast(false);
         }, 2000);
       }
+      const bodyProfessional = {
+        specialty_id: formRegisterProfesional.specialty_id,
+        description: formRegisterProfesional.description,
+        user_id: 0,
+      };
+
+      if (register && register.data) {
+        bodyProfessional.user_id = register.data.id;
+      }
+
+      if (!isUserType) {
+        const registerProfesional = await fetchRegisterProfesional(
+          bodyProfessional
+        );
+        if (registerProfesional && registerProfesional.success) {
+          console.log("Registro exitoso");
+          router.push("/login");
+        } else {
+          const errorMessages =
+            registerProfesional && "errors" in registerProfesional
+              ? Object.values(registerProfesional.errors).flat().join(", ")
+              : "Unknown error";
+          setErrors(errorMessages);
+
+          setIsVisibleToast(true);
+          setTimeout(() => {
+            setIsVisibleToast(false);
+          }, 2000);
+        }
+      }
     } catch (error) {
       console.error("Error en la solicitud", error);
       setErrors("Error en la solicitud");
@@ -75,6 +157,19 @@ export default function Component() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchSpecialties = async () => {
+      try {
+        const response = await backendService.professionalList();
+        setSpecialties(response);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchSpecialties();
+  }, []);
 
   const isFormValid = () => {
     return Object.values(formRegister).every((field) => field.trim() !== "");
@@ -117,6 +212,31 @@ export default function Component() {
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                <label>
+                  <input
+                    type="radio"
+                    name="user-type"
+                    value="user"
+                    checked={isUserType}
+                    onChange={handleUserTypeChange}
+                    className="mr-2"
+                  />
+                  Usuario
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="user-type"
+                    value="professional"
+                    checked={!isUserType}
+                    onChange={handleUserTypeChange}
+                    className="mr-2"
+                  />
+                  Profesional
+                </label>
+              </div>
+
               <div>
                 <input
                   type="text"
@@ -156,7 +276,25 @@ export default function Component() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                 >
-                  {/* SVG Icons */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                    />
+                  </svg>
                 </button>
               </div>
 
@@ -175,9 +313,59 @@ export default function Component() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                 >
-                  {/* SVG Icons */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                    />
+                  </svg>
                 </button>
               </div>
+
+              {!isUserType && (
+                <>
+                  <div>
+                    <input
+                      id="description"
+                      name="description"
+                      value={formRegisterProfesional.description}
+                      placeholder="Descripcion"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4361ee]/20 focus:border-[#4361ee]"
+                      onChange={handleInputChangeProfessional}
+                      required
+                    />
+                  </div>
+
+                  <select
+                    id="specialty_id"
+                    name="specialty_id"
+                    value={formRegisterProfesional.specialty_id}
+                    onChange={handleSelectChange}
+                    className="select select-bordered w-full"
+                    required
+                  >
+                    <option value="">Seleccione una especialidad</option>
+                    {(specialties || []).map((specialty: Specialty) => (
+                      <option key={specialty.id} value={specialty.id}>
+                        {specialty.name}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              )}
 
               <button
                 type="submit"

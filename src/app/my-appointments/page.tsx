@@ -111,7 +111,7 @@ export default function ElegantAppointmentsPage() {
                         {appointment.health_professional.specialty.name}
                       </p>
                     </div>
-                    <button
+                    {/* <button
                       onClick={() => cancelAppointment(appointment.id)}
                       className="text-red-500 hover:text-red-700 text-sm font-medium flex items-center transition duration-300"
                     >
@@ -130,7 +130,7 @@ export default function ElegantAppointmentsPage() {
                         />
                       </svg>
                       Cancelar cita
-                    </button>
+                    </button> */}
                   </div>
                   <div className="mt-6 grid grid-cols-2 gap-4">
                     <div className="flex items-center text-gray-700">

@@ -85,6 +85,7 @@ export const authenticationService = {
       return { success: false, errors: { message: (error as Error).message } };
     }
   },
+
   userDetails: async () => {
     const token = Cookies.get("token");
 

@@ -105,6 +105,26 @@ export const backendService = {
     }
   },
 
+  registerProfesional: async (body) => {
+    console.log("Este es el cuerpo que se deberia de enviar", body);
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/health-professionals`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error registering:", (error as Error).message);
+      return { success: false, errors: { message: (error as Error).message } };
+    }
+  },
+
   getProfessionalAppointments: async () => {
     const token = Cookies.get("token");
 

@@ -73,10 +73,6 @@ export default function Appointment() {
     }));
   };
 
-  useEffect(() => {
-    console.log(filteredProfessionals);
-  }, [filteredProfessionals]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -99,10 +95,6 @@ export default function Appointment() {
     fetchFilterProfessional();
     setIsDialogOpen(true);
   };
-
-  useEffect(() => {
-    console.log("Estado cita", formDataAppointment);
-  }, [formDataAppointment]);
 
   const handleProfessionalSelect = (professional: Professional) => {
     console.log("Este es el profesional seleccionado:", professional);

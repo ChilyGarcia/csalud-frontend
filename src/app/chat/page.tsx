@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 
 export default function ChatPage() {
   const [sender_id, setSender] = useState<number | null>(null);
-  const [receiver_id, setReceiver] = useState(3);
+  const [receiver_id, setReceiver] = useState(1); // Enviado al profesional
   const [messages, setMessages] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const token = Cookies.get("token");

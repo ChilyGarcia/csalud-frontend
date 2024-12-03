@@ -1,56 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, Calendar, Check, X, Menu } from "lucide-react";
-import Link from "next/link";
-import NavBar from "@/components/navbar";
+import { Bell, Calendar, Check, X } from "lucide-react";
 import { authenticationService } from "@/services/auth.service";
 import { backendService } from "@/services/backend.service";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const initialAppointments = [
-  {
-    id: 1,
-    patientName: "John Doe",
-    date: "2023-06-15",
-    time: "09:00 AM",
-    reason: "Annual checkup",
-    status: "pending",
-  },
-  {
-    id: 2,
-    patientName: "Jane Smith",
-    date: "2023-06-15",
-    time: "10:30 AM",
-    reason: "Follow-up consultation",
-    status: "pending",
-  },
-  {
-    id: 3,
-    patientName: "Bob Johnson",
-    date: "2023-06-16",
-    time: "02:00 PM",
-    reason: "Vaccination",
-    status: "pending",
-  },
-  {
-    id: 4,
-    patientName: "Alice Brown",
-    date: "2023-06-16",
-    time: "03:30 PM",
-    reason: "Skin condition",
-    status: "pending",
-  },
-];
-
 export default function AppointmentManager() {
   const [appointments, setAppointments] = useState([]);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
 
   const handleAppointment = (id: number, action: "accept" | "decline") => {
     setAppointments(appointments.filter((apt) => apt.id !== id));
+
+    console.log(id);
   };
 
   const fetchUserDetails = async () => {
@@ -64,7 +28,7 @@ export default function AppointmentManager() {
 
   const fetchProfessionalAppointments = async () => {
     try {
-      const response = await backendService.getAllAppointmentsProfessional();
+      const response = await backendService.getProfessionalAppointments();
       setAppointments(response);
     } catch (error) {
       console.error(error);
@@ -168,7 +132,7 @@ export default function AppointmentManager() {
                     onClick={() => handleAppointment(apt.id, "accept")}
                     className="px-4 py-2 bg-[#2563EB] text-white rounded-md hover:bg-blue-700 transition-colors flex items-center"
                   >
-                    <Check className="h-4 w-4 mr-1" /> Aceptar
+                    Ir
                   </button>
                 </div>
               </div>

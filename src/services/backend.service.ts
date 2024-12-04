@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 
-const BACKEND_URL = "http://csalud.test/api";
+const BACKEND_URL = "http://127.0.0.1:8000/api";
 
 export const backendService = {
   professionalList: async () => {
@@ -145,5 +145,17 @@ export const backendService = {
       console.error("Error fetching professional:", (error as Error).message);
       return [];
     }
+  },
+
+  professionalAvailabilities: async () => {
+    const token = Cookies.get("token");
+
+    try {
+      const response = await fetch(BACKEND_URL + "/availabilities", {
+         headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (error) {}
   },
 };

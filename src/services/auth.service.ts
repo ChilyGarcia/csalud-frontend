@@ -2,7 +2,7 @@ import { Credentials } from "@/interfaces/credentials.interface";
 import { RegisterCredentials } from "@/interfaces/register.interface";
 import Cookies from "js-cookie";
 
-const BACKEND_URL = "http://csalud.test/api/auth"; // https://clownfish-app-8pq82.ondigitalocean.app/api/auth    http://127.0.0.1:8000/api/auth
+const BACKEND_URL = "http://127.0.0.1:8000/api/auth"; // https://clownfish-app-8pq82.ondigitalocean.app/api/auth    http://127.0.0.1:8000/api/auth
 
 const fetchWithInterceptor = async (url: string, options: RequestInit) => {
   const response = await fetch(url, options);

@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { Calendar, Clock, Activity } from "lucide-react";
 import Cookies from "js-cookie";
-import NavBar from "@/components/navbar";
+import { format, parseISO } from "date-fns";
+import { es } from "date-fns/locale";
 
 interface Availability {
   id: number;
@@ -95,12 +96,8 @@ function App() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("es-ES", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    const date = parseISO(dateString);
+    return format(date, "EEEE, d MMMM yyyy", { locale: es });
   };
 
   return (
@@ -243,7 +240,7 @@ function App() {
                 {availabilities.map((availability) => (
                   <tr key={availability.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatDate(availability.date)}
+                      {availability.date}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {availability.available_from.slice(0, 5)}
